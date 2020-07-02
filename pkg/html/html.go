@@ -78,7 +78,7 @@ Data current as of: %s
 }
 </style>
 
-<h1 class=text-center>CI Release Health Summary</h1>
+<h1 class=text-center>CI Release {{ .Release }} Health Summary</h1>
 
 <p class="small mb-3 text-nowrap">
 	Jump to: <a href="#SummaryAcrossAllJobs">Summary Across All Jobs</a> | <a href="#FailureGroupings">Failure Groupings</a> | 
@@ -95,7 +95,7 @@ Data current as of: %s
 
 {{ summaryJobsByPlatform .Current .Prev .EndDay .JobTestCount }}
 
-{{ summaryTopFailingTests .Current.TopFailingTestsWithoutBug .Current.TopFailingTestsWithBug .Prev.All .EndDay }}
+{{ summaryTopFailingTests .Current.TopFailingTestsWithoutBug .Current.TopFailingTestsWithBug .Prev.All .EndDay .Release }}
 
 {{ summaryJobPassRatesByJobName .Current .Prev .EndDay .JobTestCount }}
 
@@ -345,7 +345,7 @@ func getPrevTest(test string, testResults []util.TestResult) *util.TestResult {
 	return nil
 }
 
-func summaryTopFailingTests(topFailingTestsWithoutBug, topFailingTestsWithBug []*util.TestResult, resultPrev map[string]util.SortedAggregateTestResult, endDay int) string {
+func summaryTopFailingTests(topFailingTestsWithoutBug, topFailingTestsWithBug []*util.TestResult, resultPrev map[string]util.SortedAggregateTestResult, endDay int, release string) string {
 	allPrev := resultPrev["all"]
 
 	// test name | bug | pass rate | higher/lower | pass rate
@@ -385,7 +385,7 @@ func summaryTopFailingTests(topFailingTestsWithoutBug, topFailingTestsWithBug []
 		} else {
 			searchUrl := fmt.Sprintf("https://search.svc.ci.openshift.org/?maxAge=168h&context=1&type=bug%%2Bjunit&name=&maxMatches=5&maxBytes=20971520&groupBy=job&search=%s", encodedTestName)
 			exampleJob := "FIXME: Replace this paragraph with a particular job URI from the search results to ground discussion.  A given test may fail for several reasons, and this bug should be scoped to one of those reasons.  Ideally you'd pick a job showing the most-common reason, but since that's hard to determine, you may also chose to pick a job at random.  Release-gating jobs (release-openshift-...) should be preferred over presubmits (pull-ci-...) because they are closer to the released product and less likely to have in-flight code changes that complicate analysis."
-			bug = fmt.Sprintf("<a target=\"_blank\" href=https://bugzilla.redhat.com/enter_bug.cgi?classification=Red%%20Hat&product=OpenShift%%20Container%%20Platform&cf_internal_whiteboard=buildcop&short_desc=%[1]s&cf_environment=%[1]s&comment=test:%%0A%[1]s%%20%%0A%%0Ais%%20failing%%20frequently%%20in%%20CI,%%20see%%20search%%20results:%%0A%s%%0A%%0A%s>Open a bug</a>", url.QueryEscape(test.Name), url.QueryEscape(searchUrl), url.QueryEscape(exampleJob))
+			bug = fmt.Sprintf("<a target=\"_blank\" href=https://bugzilla.redhat.com/enter_bug.cgi?classification=Red%%20Hat&product=OpenShift%%20Container%%20Platform&cf_internal_whiteboard=buildcop&short_desc=%[1]s&cf_environment=%[1]s&comment=test:%%0A%[1]s%%20%%0A%%0Ais%%20failing%%20frequently%%20in%%20CI,%%20see%%20search%%20results:%%0A%s%%0A%%0A%s&version=%[1]s>Open a bug</a>", url.QueryEscape(test.Name[:255]), url.QueryEscape(searchUrl), url.QueryEscape(exampleJob), release)
 		}
 
 		if testPrev != nil {
@@ -690,6 +690,7 @@ type TestReports struct {
 	Prev         util.TestReport
 	EndDay       int
 	JobTestCount int
+	Release      string
 }
 
 func WriteLandingPage(w http.ResponseWriter, releases []string) {
@@ -704,7 +705,7 @@ func WriteLandingPage(w http.ResponseWriter, releases []string) {
 	fmt.Fprintf(w, landingHtmlPageEnd)
 }
 
-func PrintHtmlReport(w http.ResponseWriter, req *http.Request, report, prevReport util.TestReport, endDay, jobTestCount int) {
+func PrintHtmlReport(w http.ResponseWriter, req *http.Request, report, prevReport util.TestReport, endDay, jobTestCount int, release string) {
 
 	w.Header().Set("Content-Type", "text/html;charset=UTF-8")
 	fmt.Fprintf(w, htmlPageStart, "Release CI Health Dashboard")
@@ -722,7 +723,7 @@ func PrintHtmlReport(w http.ResponseWriter, req *http.Request, report, prevRepor
 		},
 	).Parse(dashboardPageHtml))
 
-	if err := dashboardPage.Execute(w, TestReports{report, prevReport, endDay, jobTestCount}); err != nil {
+	if err := dashboardPage.Execute(w, TestReports{report, prevReport, endDay, jobTestCount, release}); err != nil {
 		klog.Errorf("Unable to render page: %v", err)
 	}
 

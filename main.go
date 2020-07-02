@@ -725,7 +725,7 @@ func (s *Server) printHtmlReport(w http.ResponseWriter, req *http.Request) {
 		html.WriteLandingPage(w, s.options.Releases)
 		return
 	}
-	html.PrintHtmlReport(w, req, s.analyzers[release].Report, s.analyzers[release+"-prev"].Report, s.options.EndDay, 15)
+	html.PrintHtmlReport(w, req, s.analyzers[release].Report, s.analyzers[release+"-prev"].Report, s.options.EndDay, 15, release)
 }
 
 func (s *Server) detailed(w http.ResponseWriter, req *http.Request) {
@@ -823,7 +823,7 @@ func (s *Server) detailed(w http.ResponseWriter, req *http.Request) {
 	prevAnalyzer.analyze()
 	prevAnalyzer.prepareTestReport(true)
 
-	html.PrintHtmlReport(w, req, analyzer.Report, prevAnalyzer.Report, opt.EndDay, jobTestCount)
+	html.PrintHtmlReport(w, req, analyzer.Report, prevAnalyzer.Report, opt.EndDay, jobTestCount, release)
 
 }
 
