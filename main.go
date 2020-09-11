@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/openshift/sippy/pkg/api"
@@ -316,9 +317,9 @@ func (a *Analyzer) createSyntheticTests() {
 			isUpgrade := strings.Contains(jrr.Job, "upgrade")
 
 			syntheticTests := map[string]*synthenticTestResult{
-				testgridanalysisapi.InstallTestName:        &synthenticTestResult{name: testgridanalysisapi.InstallTestName},
-				testgridanalysisapi.UpgradeTestName:        &synthenticTestResult{name: testgridanalysisapi.UpgradeTestName},
-				testgridanalysisapi.InfrastructureTestName: &synthenticTestResult{name: testgridanalysisapi.InfrastructureTestName},
+				testgridanalysisapi.InstallTestName:        {name: testgridanalysisapi.InstallTestName},
+				testgridanalysisapi.UpgradeTestName:        {name: testgridanalysisapi.UpgradeTestName},
+				testgridanalysisapi.InfrastructureTestName: {name: testgridanalysisapi.InfrastructureTestName},
 			}
 
 			installFailed := false
@@ -459,56 +460,66 @@ func downloadData(releases []string, filter string, storagePath string) {
 	if len(filter) > 0 {
 		jobFilter = regexp.MustCompile(filter)
 	}
+	var wg sync.WaitGroup
 
 	for _, release := range releases {
+		wg.Add(1)
+		go func(release string) {
+			defer wg.Done()
+			dashboard := fmt.Sprintf(dashboardTemplate, release, "blocking")
+			err := downloadJobSummaries(dashboard, storagePath)
+			if err != nil {
+				klog.Errorf("Error fetching dashboard page %s: %v\n", dashboard, err)
+				return
+			}
+			blockingJobs, _, err := loadJobSummaries(dashboard, storagePath)
+			if err != nil {
+				klog.Errorf("Error loading dashboard page %s: %v\n", dashboard, err)
+				return
+			}
 
-		dashboard := fmt.Sprintf(dashboardTemplate, release, "blocking")
-		err := downloadJobSummaries(dashboard, storagePath)
-		if err != nil {
-			klog.Errorf("Error fetching dashboard page %s: %v\n", dashboard, err)
-			continue
-		}
-		blockingJobs, _, err := loadJobSummaries(dashboard, storagePath)
-		if err != nil {
-			klog.Errorf("Error loading dashboard page %s: %v\n", dashboard, err)
-			continue
-		}
-
-		for jobName, job := range blockingJobs {
-			if util.RelevantJob(jobName, job.OverallStatus, jobFilter) {
-				klog.V(4).Infof("Job %s has bad status %s\n", jobName, job.OverallStatus)
-				err := downloadJobDetails(dashboard, jobName, storagePath)
-				if err != nil {
-					klog.Errorf("Error fetching job details for %s: %v\n", jobName, err)
+			for jobName, job := range blockingJobs {
+				if util.RelevantJob(jobName, job.OverallStatus, jobFilter) {
+					klog.V(4).Infof("Job %s has bad status %s\n", jobName, job.OverallStatus)
+					err := downloadJobDetails(dashboard, jobName, storagePath)
+					if err != nil {
+						klog.Errorf("Error fetching job details for %s: %v\n", jobName, err)
+					}
 				}
 			}
-		}
+		}(release)
+
 	}
 
 	for _, release := range releases {
+		wg.Add(1)
+		go func(release string) {
+			defer wg.Done()
 
-		dashboard := fmt.Sprintf(dashboardTemplate, release, "informing")
-		err := downloadJobSummaries(dashboard, storagePath)
-		if err != nil {
-			klog.Errorf("Error fetching dashboard page %s: %v\n", dashboard, err)
-			continue
-		}
-		informingJobs, _, err := loadJobSummaries(dashboard, storagePath)
-		if err != nil {
-			klog.Errorf("Error fetching dashboard page %s: %v\n", dashboard, err)
-			continue
-		}
+			dashboard := fmt.Sprintf(dashboardTemplate, release, "informing")
+			err := downloadJobSummaries(dashboard, storagePath)
+			if err != nil {
+				klog.Errorf("Error fetching dashboard page %s: %v\n", dashboard, err)
+				return
+			}
+			informingJobs, _, err := loadJobSummaries(dashboard, storagePath)
+			if err != nil {
+				klog.Errorf("Error fetching dashboard page %s: %v\n", dashboard, err)
+				return
+			}
 
-		for jobName, job := range informingJobs {
-			if util.RelevantJob(jobName, job.OverallStatus, jobFilter) {
-				klog.V(4).Infof("Job %s has bad status %s\n", jobName, job.OverallStatus)
-				err := downloadJobDetails(dashboard, jobName, storagePath)
-				if err != nil {
-					klog.Errorf("Error fetching job details for %s: %v\n", jobName, err)
+			for jobName, job := range informingJobs {
+				if util.RelevantJob(jobName, job.OverallStatus, jobFilter) {
+					klog.V(4).Infof("Job %s has bad status %s\n", jobName, job.OverallStatus)
+					err := downloadJobDetails(dashboard, jobName, storagePath)
+					if err != nil {
+						klog.Errorf("Error fetching job details for %s: %v\n", jobName, err)
+					}
 				}
 			}
-		}
+		}(release)
 	}
+	wg.Wait()
 }
 
 func (a *Analyzer) prepareTestReport() {
