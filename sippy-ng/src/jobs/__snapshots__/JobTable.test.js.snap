@@ -431,7 +431,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"3\\"
+                  <div data-id=\\"7\\"
                        data-rowindex=\\"1\\"
                        role=\\"row\\"
                        class=\\"Mui-odd JobTable-row-percent-0-1 MuiDataGrid-row\\"
@@ -510,7 +510,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"19\\"
+                  <div data-id=\\"18\\"
                        data-rowindex=\\"2\\"
                        role=\\"row\\"
                        class=\\"Mui-even JobTable-row-percent-0-1 MuiDataGrid-row\\"
@@ -747,7 +747,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"5\\"
+                  <div data-id=\\"13\\"
                        data-rowindex=\\"5\\"
                        role=\\"row\\"
                        class=\\"Mui-odd JobTable-row-percent-0-1 MuiDataGrid-row\\"
@@ -826,7 +826,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"39\\"
+                  <div data-id=\\"38\\"
                        data-rowindex=\\"6\\"
                        role=\\"row\\"
                        class=\\"Mui-even JobTable-row-percent-38-39 MuiDataGrid-row\\"
@@ -984,7 +984,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"33\\"
+                  <div data-id=\\"36\\"
                        data-rowindex=\\"8\\"
                        role=\\"row\\"
                        class=\\"Mui-even JobTable-row-percent-33-34 MuiDataGrid-row\\"
@@ -1142,7 +1142,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"46\\"
+                  <div data-id=\\"49\\"
                        data-rowindex=\\"10\\"
                        role=\\"row\\"
                        class=\\"Mui-even JobTable-row-percent-50-51 MuiDataGrid-row\\"
@@ -1221,7 +1221,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"35\\"
+                  <div data-id=\\"29\\"
                        data-rowindex=\\"11\\"
                        role=\\"row\\"
                        class=\\"Mui-odd JobTable-row-percent-33-34 MuiDataGrid-row\\"
@@ -1379,7 +1379,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"48\\"
+                  <div data-id=\\"46\\"
                        data-rowindex=\\"13\\"
                        role=\\"row\\"
                        class=\\"Mui-odd JobTable-row-percent-50-51 MuiDataGrid-row\\"
@@ -1458,7 +1458,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"73\\"
+                  <div data-id=\\"70\\"
                        data-rowindex=\\"14\\"
                        role=\\"row\\"
                        class=\\"Mui-even JobTable-row-percent-77-78 MuiDataGrid-row\\"
@@ -1537,7 +1537,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"75\\"
+                  <div data-id=\\"76\\"
                        data-rowindex=\\"15\\"
                        role=\\"row\\"
                        class=\\"Mui-odd JobTable-row-percent-79-80 MuiDataGrid-row\\"
@@ -1774,7 +1774,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"41\\"
+                  <div data-id=\\"39\\"
                        data-rowindex=\\"18\\"
                        role=\\"row\\"
                        class=\\"Mui-even JobTable-row-percent-38-39 MuiDataGrid-row\\"
@@ -1932,7 +1932,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"29\\"
+                  <div data-id=\\"37\\"
                        data-rowindex=\\"20\\"
                        role=\\"row\\"
                        class=\\"Mui-even JobTable-row-percent-33-34 MuiDataGrid-row\\"
@@ -2090,7 +2090,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"82\\"
+                  <div data-id=\\"83\\"
                        data-rowindex=\\"22\\"
                        role=\\"row\\"
                        class=\\"Mui-even JobTable-row-percent-92-93 MuiDataGrid-row\\"
@@ -2169,7 +2169,7 @@ exports[`JobTable should render correctly 1`] = `
                     >
                     </div>
                   </div>
-                  <div data-id=\\"69\\"
+                  <div data-id=\\"72\\"
                        data-rowindex=\\"23\\"
                        role=\\"row\\"
                        class=\\"Mui-odd JobTable-row-percent-77-78 MuiDataGrid-row\\"
